@@ -1,0 +1,53 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: react-starter-ui
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: react-starter-ui
+    spec:
+      containers:
+      - name: react-starter-ui
+        image: "registry.ng.bluemix.net/react-starter/react-starter-ui:$BUILD_NUMBER"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 4895
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: react-starter-ui-service
+  labels:
+    app: react-starter-ui-service
+spec:
+  ports:
+  - port: 5000
+    protocol: TCP
+  selector:
+    app: react-starter-ui
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: react-starter-ui-ingress
+  labels:
+    heritage: Tiller
+  annotations:
+    ingress.bluemix.net/redirect-to-https: "true"
+spec:
+  tls:
+  - hosts:
+    - <CLUSTER_NAME>.us-east.containers.appdomain.cloud
+    secretName: <CLUSTER NAME>
+  rules:
+  - host: <CLUSTER_NAME>.us-east.containers.appdomain.cloud
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: react-starter-ui-service
+          servicePort: 5000
+---
