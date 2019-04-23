@@ -14,8 +14,8 @@ const App = () => (
   <Provider store={store}>
     <ConnectedRouter history={history}>
       <div className="App">
-        <CssBaseline />
         <MuiThemeProvider theme={theme}>
+          <CssBaseline />
           <Switch>
             <Route exact path="/" component={HelloWorld} />
           </Switch>
